@@ -128,7 +128,7 @@ ServerTcp.prototype.close = function() {
 };
 
 /**
- * This global function call get the good socket and call your onAccept method
+ * This global function call the good socket and call your onAccept method
  *
  * @global
  *
