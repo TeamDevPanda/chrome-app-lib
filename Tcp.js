@@ -1,18 +1,13 @@
-/**
- * Warning !!
- * For use the Tcp class you need:
- *    - utils.js
- */
 
 /**
- * List all the active socket
+ * List of all the active tcp
  * @global
  *
  * @private
  *
  * @type {array}
  */
-var g_sockets = [];
+var g_tcp = [];
 
 /**
  * Class representing a Tcp Socket
@@ -58,11 +53,11 @@ var Tcp = function(socketId, host, port) {
    *
    * @type {function}
    *
-   * @param {string} data
+   * @param {ArrayBuffer} data
    */
   this.onReceive = undefined;
 
-  g_sockets.push(this);
+  g_tcp.push(this);
 };
 
 /**
@@ -111,7 +106,6 @@ Tcp.prototype.constructor = Tcp;
  */
 Tcp.prototype.send = function(data) {
   return new Promise(function(resolve, reject) {
-    console.log(this._socketId);
     chrome.sockets.tcp.send(this._socketId, str2ab(data), function(sendInfos) {
       if (sendInfos.resultCode >= 0) {
         resolve(sendInfos.bytesSent);
@@ -133,8 +127,8 @@ Tcp.prototype.close = function() {
   return new Promise(function(resolve, reject) {
     chrome.sockets.tcp.close(this._socketId, function() {
       resolve();
-    }.bind(this));
-  });
+    });
+  }.bind(this));
 };
 
 /**
@@ -145,11 +139,11 @@ Tcp.prototype.close = function() {
  * @private
  */
 chrome.sockets.tcp.onReceive.addListener(function(infos) {
-  for (var i = 0; i < g_sockets.length; i++) {
-    var g_socket = g_sockets[i];
-    if (g_socket._socketId == infos.socketId) {
-      if (typeof g_socket.onReceive == "function") {
-        g_socket.onReceive(ab2str(infos.data));
+  for (var i = 0; i < g_tcp.length; i++) {
+    var tcp = g_tcp[i];
+    if (tcp._socketId == infos.socketId) {
+      if (typeof tcp.onReceive == "function") {
+        tcp.onReceive(infos.data);
         break;
       }
     }

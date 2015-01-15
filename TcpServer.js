@@ -1,13 +1,12 @@
 /**
  * Warning !!
  * For use the TcpServer class you need:
- *    - utils.js
  *    - Tcp.js
  */
 
 
 /**
- * Global list of all server tcp
+ * Global list of all tcp server
  *
  * @global
  *
@@ -97,7 +96,7 @@ TcpServer.create = function(host, port) {
  *
  * @public
  *
- * @return {array}
+ * @return {promise}
  */
 ServerTcp.getSockets = function() {
   return new Promise(function(resolve, reject) {
@@ -122,8 +121,10 @@ ServerTcp.prototype.constructor = ServerTcp;
  * @returns {promise}
  */
 ServerTcp.prototype.close = function() {
-  chrome.sockets.tcpServer.close(this._socketId, function() {
-    console.log("close: " + this._socketId);
+  return new Promise(function(resolve, reject) {
+    chrome.sockets.tcpServer.close(this._socketId, function() {
+      resolve();
+    });
   }.bind(this));
 };
 
